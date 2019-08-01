@@ -1,0 +1,14 @@
+{
+  "extends": "erb",
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "configs/webpack.config.eslint.js"
+      }
+    }
+  },
+  "rules": {
+    "prettier/prettier": "off",
+    "react/destructuring-assignment": "off"
+  }
+}
