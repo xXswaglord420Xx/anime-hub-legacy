@@ -9,6 +9,8 @@
   },
   "rules": {
     "prettier/prettier": "off",
-    "react/destructuring-assignment": "off"
+    "react/destructuring-assignment": "off",
+    "import/prefer-default-export": "off",
+    "flowtype/no-weak-types": "off"
   }
 }

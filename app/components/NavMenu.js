@@ -1,13 +1,16 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import List from '@material-ui/core/List';
+import {ListItemLink} from './ListItemLink';
 import routes from '../constants/routes';
-import styles from './NavMenu.css';
+import styles from './NavMenu.css'
 
 export default function NavMenu() {
   return (
-    <div className={styles.menu}>
-      <NavLink className={styles.link} exact activeClassName={styles.active} to={routes.HOME}>Home</NavLink>
-      <NavLink className={styles.link} activeClassName={styles.active} to={routes.COUNTER}>Counter</NavLink>
-    </div>
+    <List className={styles.elem} component='nav'>
+      <ListItemLink primary='Home' to={routes.HOME}/>
+      <ListItemLink primary='This name is actually long' to={routes.COUNTER} />
+    </List>
   );
 }
+
+

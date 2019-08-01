@@ -3,6 +3,7 @@
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
 @import '~@fortawesome/fontawesome-free/css/all.css';
+@import '~typeface-roboto/index.css';
 
 * {
   box-sizing: inherit;
@@ -10,41 +11,12 @@
 
 body {
   position: relative;
-  color: white;
   height: 100vh;
   background-color: white;
-  font-family: Arial, Helvetica, Helvetica Neue, serif;
+  font-family: Roboto, Arial, Helvetica, Helvetica Neue, serif;
   overflow-y: hidden;
   margin: 0;
   padding: 0;
-}
-
-h2 {
-  margin: 0;
-  font-size: 2.25rem;
-  font-weight: bold;
-  letter-spacing: -0.025em;
-  color: #fff;
-}
-
-p {
-  font-size: 24px;
-}
-
-li {
-  list-style: none;
-}
-
-a {
-  color: white;
-  opacity: 0.75;
-  text-decoration: none;
-}
-
-a:hover {
-  opacity: 1;
-  text-decoration: none;
-  cursor: pointer;
 }
 
 #root {
@@ -52,4 +24,8 @@ a:hover {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }

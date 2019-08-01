@@ -3,7 +3,10 @@ import type { Torrent } from '../utils/nyaapi';
 
 export type counterStateType = number;
 
-export type torrentStateType = Torrent[];
+export type torrentStateType = {
+  torrents: Torrent[],
+  loading: boolean
+};
 
 export type stateType = {
   +torrents: torrentStateType,

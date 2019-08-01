@@ -1,17 +1,17 @@
 .container {
   flex: 1;
-  background-color: #fafafa;
   display: flex;
   flex-direction: column;
-  color: black;
-  overflow-y: scroll;
-}
-
-.container::-webkit-scrollbar-thumb {
-  background-color: red;
 }
 
 .torrent-list {
   flex: 1;
-  margin-top: 9px;
+  overflow-y: scroll;
+}
+
+.loading-container {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
 }

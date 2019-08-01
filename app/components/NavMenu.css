@@ -1,26 +1,3 @@
-.menu {
-  background: #263238;
-  min-width: 300px;
-  transition-duration: 0.33s;
-}
-
-.menu.hidden {
-  min-width: 0;
-  max-width: 0;
-}
-
-.link {
-  display: block;
-  padding: 17px 19px;
-  transition-duration: 0.266s;
-  color: white;
-  font-weight: normal;
-}
-
-.link:hover:not(.active) {
-  background-color: #1d262b;
-}
-
-.link.active {
-  background-color: #000a12;
+.elem {
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
