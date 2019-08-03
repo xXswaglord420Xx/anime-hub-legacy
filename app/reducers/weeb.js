@@ -1,7 +1,7 @@
 import { FIND_TORRENTS, LOAD_TORRENTS } from '../actions/weeb';
-import type { Torrent } from '../utils/nyaapi';
+import type {nyaaStateType as nyaa} from './types';
 
-export default function weeb(state: {torrents: Torrent[], loading: boolean} = {torrents: [], loading: true}, action) {
+export default function weeb(state: nyaa = {torrents: [], loading: true}, action) {
   switch (action.type) {
     case FIND_TORRENTS:
       return {torrents: action.torrents, loading: false};

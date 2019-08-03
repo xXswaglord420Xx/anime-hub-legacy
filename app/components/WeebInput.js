@@ -4,9 +4,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
 import Bar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
 /*
@@ -81,9 +79,7 @@ type Props = {
 export function SearchTorrent(props: Props) {
   const {prompt, search, ...rest} = props;
 
-  const classes = useStyles();
-
-  return <TextField label='Search' className={classes.textField} size='large' type='text' {...rest} placeholder={prompt} inputProps={{
+  return <TextField label='Search' size='large' type='text' {...rest} placeholder={prompt} inputProps={{
     onKeyDown: e => {
       if (e.keyCode === 13) {
         e.preventDefault();
@@ -102,16 +98,8 @@ export function AppBar(props: Props) {
   return (
     <Bar position="static">
       <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          className={classes.menuButton}
-          aria-label="open drawer"
-        >
-          <MenuIcon />
-        </IconButton>
         <Typography className={classes.title} variant="h6" noWrap>
-          Weeb Torrent
+          Nyaa
         </Typography>
 
         <div className={classes.search}>

@@ -5,7 +5,19 @@ import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 
-const store = configureStore({torrents: {torrents: [], loading: true}, counter: 0});
+const store = configureStore({
+  nyaa: {
+    torrents: [],
+    loading: true
+  },
+  webTorrent: {
+   tracked: new Map([["yes", {
+     path: "test path",
+     size: 100000,
+     completed: 10000
+   }]])
+  }
+});
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 

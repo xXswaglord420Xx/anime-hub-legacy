@@ -10,10 +10,23 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import WebTorrent from 'webtorrent';
 import MenuBuilder from './menu';
+
+const client = new WebTorrent();
+
+console.log("Listening for torrent requests...");
+ipcMain.on('request-torrent', (event, arg) => {
+  console.log(`Downloading torrent to ${arg.path}`);
+  client.add(arg.magnet, {path: arg.path}, t => {
+    t.on('done', () => {
+      console.log("DONE");
+    })
+  });
+});
 
 export default class AppUpdater {
   constructor() {
@@ -34,6 +47,7 @@ if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
+  process.on('warning', e => console.warn(e.stack));
   require('electron-debug')();
 }
 

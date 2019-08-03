@@ -10,13 +10,15 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import type {Torrent} from "../utils/nyaapi";
 
 type Props = {
-  torrent: Torrent
+  torrent: Torrent,
+  onClick: SyntheticMouseEvent => void,
+  onSecondary: SyntheticMouseEvent => void
 };
 
-export default function({torrent}: Props) {
-  return <ListItem button>
+export default function({torrent, onClick, onSecondary}: Props) {
+  return <ListItem onClick={() => onClick(torrent)} button>
     <ListItemText primary={torrent.title} />
-    <ListItemSecondaryAction>
+    <ListItemSecondaryAction onClick={() => onSecondary(torrent)}>
       <IconButton edge="end">
         <SaveAlt/>
       </IconButton>

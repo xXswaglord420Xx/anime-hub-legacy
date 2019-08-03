@@ -1,16 +1,33 @@
 import type { Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux';
 import type { Torrent } from '../utils/nyaapi';
 
-export type counterStateType = number;
 
-export type torrentStateType = {
-  torrents: Torrent[],
-  loading: boolean
+export type webTorrent = {
+  completed: boolean,
+  path: string,
+  torrent: string,
+  size: number,
+  downloaded: number,
+  uploadSpeed: number,
+  downloadSpeed: number,
+  peers: number,
+  hash: string
+};
+
+export type nyaaStateType = {
+  +torrents: Torrent[],
+  +loading: boolean
+};
+
+export type webTorrentStateType = {
+  +tracked: Map<string, webTorrent>,
+  +active: webTorrent
 };
 
 export type stateType = {
-  +torrents: torrentStateType,
-  +counter: counterStateType
+  +nyaa: nyaaStateType,
+  +webTorrent: webTorrentStateType,
+  +torrentClient: Object
 };
 
 export type Action = {
