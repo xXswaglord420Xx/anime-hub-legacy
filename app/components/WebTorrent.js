@@ -14,7 +14,7 @@ export default function WebTorrent(props: PropsType) {
   return (
     <ListItem>
       <ListItemText>
-        Torrent {torrent.path} at {torrent.downloaded / torrent.size}%
+        Torrent {torrent.path} at {((torrent.progress * 10000) / 100).toFixed(2)}%
       </ListItemText>
     </ListItem>
   );

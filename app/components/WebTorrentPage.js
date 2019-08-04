@@ -10,7 +10,7 @@ type TorrentPageProps = {
 export default function WebTorrentPage(props: TorrentPageProps) {
   const torrents = props.torrents;
 
-  const views = torrents.map(t => <WebTorrent torrent={t}/>);
+  const views = torrents.map(t => <WebTorrent key={t.hash} torrent={t}/>);
 
   return (
     <List>

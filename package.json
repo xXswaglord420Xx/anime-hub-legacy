@@ -1,7 +1,7 @@
 {
   "name": "weeb-torrent",
   "productName": "WeebTorrent",
-  "version": "0.1.1",
+  "version": "0.4.0",
   "description": "Torrents for weebs",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",

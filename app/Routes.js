@@ -8,6 +8,7 @@ import App from './containers/App';
 import HomePage from './containers/HomePage';
 import WebTorrent from './containers/WebTorrent';
 import Menu from './components/NavMenu';
+import Player from './containers/Player';
 
 export default () => (
   <App>
@@ -16,6 +17,7 @@ export default () => (
         <Menu />
         <Switch>
           <Route path={routes.WEBTORRENT} component={WebTorrent} />
+          <Route path={routes.PLAYER} component={Player} />
           <Route path={routes.HOME} component={HomePage} />
         </Switch>
       </CssBaseline>

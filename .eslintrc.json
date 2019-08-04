@@ -12,6 +12,7 @@
     "react/destructuring-assignment": "off",
     "import/prefer-default-export": "off",
     "flowtype/no-weak-types": "off",
-    "prefer-destructuring": "off"
+    "prefer-destructuring": "off",
+    "no-plusplus": "off"
   }
 }

@@ -18,12 +18,35 @@ import MenuBuilder from './menu';
 
 const client = new WebTorrent();
 
+function serialiseTorrent(t) {
+  return {
+    progress: t.progress,
+    downloadSpeed: t.downloadSpeed,
+    uploadSpeed: t.uploadSpeed,
+    numPeers: t.numPeers
+  };
+}
+
 console.log("Listening for torrent requests...");
 ipcMain.on('request-torrent', (event, arg) => {
   console.log(`Downloading torrent to ${arg.path}`);
   client.add(arg.magnet, {path: arg.path}, t => {
+    event.sender.send("torrent-begin", {...serialiseTorrent(t), id: arg.magnet});
+
+    const interval = setInterval(() => {
+      event.sender.send("torrent-progress", {...serialiseTorrent(t), id: arg.magnet});
+    }, 1000);
+
+    /*
+    t.on('download', () => {
+      event.sender.send("torrent-progress", t);
+    });
+    */
     t.on('done', () => {
+      clearInterval(interval);
+      event.sender.send("torrent-finish", {...serialiseTorrent(t), id: arg.magnet});
       console.log("DONE");
+      t.destroy(()=> console.log("destroyed"));
     })
   });
 });
@@ -70,6 +93,7 @@ app.on('window-all-closed', () => {
   // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit();
+    client.destroy(() => console.log("Client destroyed"));
   }
 });
 

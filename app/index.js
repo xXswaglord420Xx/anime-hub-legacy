@@ -11,11 +11,7 @@ const store = configureStore({
     loading: true
   },
   webTorrent: {
-   tracked: new Map([["yes", {
-     path: "test path",
-     size: 100000,
-     completed: 10000
-   }]])
+   tracked: new Map()
   }
 });
 

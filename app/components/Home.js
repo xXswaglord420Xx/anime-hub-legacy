@@ -1,6 +1,6 @@
 // @flow
 import React, {useEffect} from 'react';
-import {remote, ipcRenderer} from 'electron'
+import {remote} from 'electron'
 import List from '@material-ui/core/List';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Torrent from './Torrent'
@@ -18,13 +18,11 @@ type Props = {
 
 async function openDialogue(torrent: T, download) {
   const res = await remote.dialog.showSaveDialog({defaultPath: torrent.title});
-  console.log(download);
   console.log(res);
 
   if (res) {
-    console.log("Issuing download with ipc...");
-    ipcRenderer.send('request-torrent', {magnet: torrent.magnetURL, path: res});
-    // download(torrent.magnetURL, res);
+    console.log("Issuing download with action...");
+    download(torrent.magnetURL, res);
   }
 }
 

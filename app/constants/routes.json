@@ -1,5 +1,6 @@
 {
   "HOME": "/",
   "COUNTER": "/counter",
-  "WEBTORRENT": "/webtorrent"
+  "WEBTORRENT": "/webtorrent",
+  "PLAYER": "/player"
 }

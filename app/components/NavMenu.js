@@ -39,8 +39,9 @@ export default function NavMenu() {
       <div className={classes.toolbar} />
       <Divider/>
       <List component='nav'>
-        <ListItemLink primary='Home' to={routes.HOME}/>
-        <ListItemLink primary='This name is actually long' to={routes.WEBTORRENT} />
+        <ListItemLink primary='Nyaa' to={routes.HOME}/>
+        <ListItemLink primary='Torrents' to={routes.WEBTORRENT} />
+        <ListItemLink primary='Player' to={routes.PLAYER}/>
       </List>
     </Drawer>
   );
