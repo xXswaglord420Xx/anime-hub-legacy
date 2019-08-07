@@ -3,7 +3,8 @@
 
 export type Opts = {
   +trusted: boolean,
-  +english: boolean
+  +english: boolean,
+  +page: number
 };
 
 export type Torrent = {
@@ -16,6 +17,13 @@ export type Torrent = {
   +size: number,
   +seeds: number,
   +leeches: number
+};
+
+export type EpisodeDatum = {
+  +magnetURL: string,
+  +title: string,
+  +episode: number,
+  +date: number
 };
 
 /**
@@ -32,13 +40,14 @@ const sizes = {
   TiB: 1024 * 1024 * 1024 * 1024
 };
 
-async function search(term: string, opts?: Opts = {trusted: true, english: true}): Promise<string> {
+async function searchFor(term: string, opts?: Opts = {trusted: true, english: true, page: 1}): Promise<string> {
   const f = opts.trusted ? '2' : '0';
   const c = opts.english ? '1_2' : '0_0';
   const url = new URL(nyaaURL);
   url.searchParams.append('f', f);
   url.searchParams.append('c', c);
   url.searchParams.append('q', term);
+  url.searchParams.append('p', opts.page || 1);
 
   const content = await fetch(url.toString());
   return content.text();
@@ -108,7 +117,28 @@ function parseNyaa(nyaa: string): Torrent[] {
 }
 
 
-export default async function(term, opts?: Opts): Promise<Torrent> {
-  const content = await search(term, opts);
+export async function search(term, opts?: Opts): Promise<Torrent> {
+  const content = await searchFor(term, opts);
   return parseNyaa(content);
+}
+
+export function getEpisodes(anime, page = 1): Promise<EpisodeDatum> {
+  return search(`${anime} horriblesubs 1080p`, {trusted: true, english: true, page})
+    .then(r => r.map(torrentToEpisode));
+}
+
+const torrentRegex = /\[HorribleSubs](.+) - (\d+)/;
+
+function torrentToEpisode(torrent: Torrent): EpisodeDatum {
+  const matches = torrentRegex.exec(torrent.title);
+  console.log(`Matches against ${torrent.title}`);
+  console.log(matches);
+  const title = matches[1];
+  const episode = matches[2];
+  return {
+    title,
+    episode,
+    date: torrent.date,
+    magnetURL: torrent.magnetURL
+  }
 }

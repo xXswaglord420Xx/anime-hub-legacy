@@ -12,6 +12,12 @@ const store = configureStore({
   },
   webTorrent: {
    tracked: new Map()
+  },
+  schedule: {
+    currentPage: 0,
+    hasNextPage: true,
+    media: [],
+    fetching: false
   }
 });
 

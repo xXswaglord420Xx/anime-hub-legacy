@@ -1,5 +1,5 @@
 // @flow
-import search from '../utils/nyaapi'
+import {search} from '../utils/nyaapi'
 
 export const FIND_TORRENTS = "ADD_TORRENTS";
 export const LOAD_TORRENTS = "LOAD_TORRENTS";

@@ -16,6 +16,19 @@ import log from 'electron-log';
 import WebTorrent from 'webtorrent';
 import MenuBuilder from './menu';
 
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.focus()
+    }
+  })
+}
+
 const client = new WebTorrent();
 
 function serialiseTorrent(t) {

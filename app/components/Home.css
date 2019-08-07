@@ -8,10 +8,3 @@
   flex: 1;
   overflow-y: scroll;
 }
-
-.loading-container {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-}

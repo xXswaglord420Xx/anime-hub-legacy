@@ -2,5 +2,7 @@
   "HOME": "/",
   "COUNTER": "/counter",
   "WEBTORRENT": "/webtorrent",
-  "PLAYER": "/player"
+  "PLAYER": "/player",
+  "ANIMES": "/animes",
+  "ANIME": "/anime/:name/:id"
 }

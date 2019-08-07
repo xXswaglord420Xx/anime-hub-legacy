@@ -18,6 +18,29 @@ export type nyaaStateType = {
   +loading: boolean
 };
 
+export type animeStateType = {
+  id: number,
+  title: {
+    romaji: string,
+    native: string,
+    english: string
+  },
+  coverImage: {
+    extraLarge: string
+  },
+  nextAiringEpisode: {
+    episode: number,
+    timeUntilAiring: number
+  }
+};
+
+export type scheduleStateType = {
+  currentPage: number,
+  hasNextPage: boolean,
+  media: animeStateType[],
+  fetching: boolean
+};
+
 export type webTorrentStateType = {
   +tracked: Map<string, webTorrent>,
   +active: webTorrent
@@ -26,7 +49,8 @@ export type webTorrentStateType = {
 export type stateType = {
   +nyaa: nyaaStateType,
   +webTorrent: webTorrentStateType,
-  +torrentClient: Object
+  +torrentClient: Object,
+  +schedule: scheduleStateType
 };
 
 export type Action = {

@@ -1,0 +1,60 @@
+.root {
+  overflow: scroll;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 10px;
+}
+
+.root * {
+  margin: 0;
+  padding: 0;
+}
+
+.tile {
+  cursor: pointer;
+  width: 220px;
+  transition: 0.2s;
+  margin: 10px 5px;
+}
+
+.tile:nth-child(odd) {
+  transform: translateY(20px);
+}
+
+.titleBar {
+  padding: 13px;
+  border-radius: 0 0 13px 13px;
+  transition: 0.133s;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 220px;
+}
+
+.titleBar > * {
+  text-overflow: inherit;
+  overflow: inherit;
+  white-space: inherit;
+}
+
+.tile:hover {
+  transform: translateY(-12px);
+}
+
+.tile:nth-child(odd):hover {
+  transform: translateY(8px);
+}
+
+.image {
+  border-radius: 5px 5px 0 0;
+  height: 320px;
+  object-fit: cover;
+}
+
+.unlink {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+}
