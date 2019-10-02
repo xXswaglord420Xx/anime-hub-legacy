@@ -16,7 +16,7 @@ export default class TorrentClient {
     this.reviveTorrents().catch(console.error);
 
     if (listenIpc) {
-      ipcMain.on('torrent:request', this.updateWindowState(windowRef.get()));
+      ipcMain.on('torrent:request', () => this.updateWindowState(windowRef.get()));
       ipcMain.on('torrent:modify', async (event, {type, id, resourceId, path}) => {
         switch (type) {
           case 'new':

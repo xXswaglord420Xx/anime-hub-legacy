@@ -27,7 +27,7 @@ export default () => {
     }
 
     ipcRenderer.on('state:torrent', onTorrentStateChanged);
-    ipcRenderer.send('torrent:request')
+    ipcRenderer.send('torrent:request');
   }, []);
   return null;
 }
