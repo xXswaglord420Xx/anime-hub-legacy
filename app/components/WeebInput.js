@@ -1,19 +1,12 @@
-import React from 'react'
-import TextField from '@material-ui/core/TextField';
+import React, {useEffect, useState} from 'react'
 import InputBase from '@material-ui/core/InputBase';
-import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
+import { createStyles, fade, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import Bar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import SearchIcon from '@material-ui/icons/Search';
-
-/*
-const useStyles = makeStyles(theme => ({
-  textField: {
-    margin: theme.spacing(2)
-  }
-}));
-*/
+import TablePagination from "@material-ui/core/TablePagination";
+import Box from "@material-ui/core/Box";
 
 const useStyles= makeStyles((theme: Theme) =>
   createStyles({
@@ -72,57 +65,67 @@ const useStyles= makeStyles((theme: Theme) =>
 
 
 type Props = {
-  search: string => void,
+  search: (string, {page: number}) => void,
+  children: React.ReactNode,
   prompt: ?string
 };
 
-export function SearchTorrent(props: Props) {
-  const {prompt, search, ...rest} = props;
-
-  return <TextField label='Search' size='large' type='text' {...rest} placeholder={prompt} inputProps={{
-    onKeyDown: e => {
-      if (e.keyCode === 13) {
-        e.preventDefault();
-        search(e.currentTarget.value);
-      }
-    }
-  }}/>
-}
-
-
 export function AppBar(props: Props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const [term, setTerm] = useState("");
+  const [page, setPage] = useState(1);
 
   const {prompt, search} = props;
+  console.log(`Page is ${page}`);
+
+  useEffect(() => {
+    search(term, {page, english: true, trusted: true})
+  }, [term, page]);
 
   return (
-    <Bar position="static">
-      <Toolbar>
-        <Typography className={classes.title} variant="h6" noWrap>
-          Nyaa
-        </Typography>
+    <>
+      <Bar style={{backgroundColor: theme.palette.background.main, color: 'white'}} position="static">
+        <Toolbar>
+          <Typography className={classes.title} variant="h6" noWrap>
+            Nyaa
+          </Typography>
 
-        <div className={classes.search}>
-          <div className={classes.searchIcon}>
-            <SearchIcon />
-          </div>
-          <InputBase
-            placeholder={prompt}
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput,
-            }}
-            inputProps={{ 'aria-label': 'search', onKeyDown: e => {
-                if (e.keyCode === 13) {
-                  e.preventDefault();
-                  search(e.currentTarget.value);
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon/>
+            </div>
+            <InputBase
+              placeholder={prompt}
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{
+                'aria-label': 'search', onKeyDown: e => {
+                  if (e.keyCode === 13) {
+                    e.preventDefault();
+                    setTerm(e.currentTarget.value)
+                  }
                 }
-              }
-            }}
-          />
-        </div>
-      </Toolbar>
-    </Bar>
+              }}
+            />
+          </div>
+        </Toolbar>
+      </Bar>
+      {props.children}
+      <Box borderTop={1} borderColor='grey.600'>
+        <TablePagination
+          rowsPerPageOptions={[]}
+          page={page - 1}
+          count={Number.MAX_SAFE_INTEGER}
+          rowsPerPage={16}
+          onChangePage={(_, p) => setPage(p + 1)}
+          component="div"
+          labelDisplayedRows={() => `Page ${page}`}
+        />
+      </Box>
+    </>
   );
 }
 

@@ -1,0 +1,16 @@
+{
+  "discord": {
+    "clientId": "619209729977221120"
+  },
+  "servers": {
+    "hub": {
+      "name": "Nico's Anime Hub",
+      "url": "https://nico-anime.herokuapp.com"
+    },
+    "nyaa": {
+      "name": "Nyaa Torrents",
+      "url": "https://nyaa.si/",
+      "pageCount": 75
+    }
+  }
+}

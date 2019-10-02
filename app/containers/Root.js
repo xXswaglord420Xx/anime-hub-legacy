@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import type { Store } from '../reducers/types';
 import Routes from '../Routes';
+import WebTorrenter from './WebTorrenter';
 
 type Props = {
   store: Store,
@@ -16,6 +17,7 @@ export default class Root extends Component<Props> {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
+          <WebTorrenter />
           <Routes />
         </ConnectedRouter>
       </Provider>

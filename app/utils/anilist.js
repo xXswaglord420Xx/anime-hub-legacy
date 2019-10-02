@@ -1,3 +1,5 @@
+// @flow
+
 const url = "https://graphql.anilist.co";
 
 // language=GraphQL
@@ -87,6 +89,9 @@ const Q_FETCH_ANIME = `
           },
           id
         }
+      },
+      streamingEpisodes {
+        thumbnail
       }
     }
   }
@@ -96,6 +101,39 @@ export const fetchAiringAnime = (page: number = 1) => {
   return request(Q_AIRING_ANIME, {page}).then(r => r.data.Page);
 };
 
-export const fetchAnime = (id: number) => {
-  return request(Q_FETCH_ANIME, {id});
+export const fetchAnime = (id: number): Promise<AnimeDetails> => {
+  return request(Q_FETCH_ANIME, {id}).then(r => r.data);
+};
+
+export type Media = {
+  id: string,
+  bannerImage: ?string,
+  title: {
+    romaji: ?string,
+    english: ?string
+  },
+  episodes: number,
+  nextAiringEpisode: {
+    episode: number,
+    airingAt: number
+  },
+  coverImage: {
+    large: string
+  },
+  description: string,
+  characters: {
+    nodes: [{
+      id: string,
+      name: {
+        full: string
+      }
+    }]
+  },
+  streamingEpisodes: [{
+    thumbnail: ?string
+  }]
+};
+
+export type AnimeDetails = {
+  Media: Media
 };

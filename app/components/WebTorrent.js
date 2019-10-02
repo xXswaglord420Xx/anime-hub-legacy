@@ -1,6 +1,6 @@
 import React from 'react';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import type { webTorrent } from '../reducers/types';
 
 type PropsType = {
@@ -9,13 +9,12 @@ type PropsType = {
 
 export default function WebTorrent(props: PropsType) {
   const torrent = props.torrent;
-  console.log("RENDER TORRENT");
-  console.log(torrent);
   return (
-    <ListItem>
-      <ListItemText>
-        Torrent {torrent.path} at {((torrent.progress * 10000) / 100).toFixed(2)}%
-      </ListItemText>
+    <ListItem style={{width: '100%', padding: '13px'}}>
+      <div style={{width: '100%'}}>
+        <p>{torrent.name}</p>
+        <LinearProgress variant='determinate' color='secondary' value={torrent.progress * 100}/>
+      </div>
     </ListItem>
   );
 };

@@ -2,7 +2,10 @@
   "HOME": "/",
   "COUNTER": "/counter",
   "WEBTORRENT": "/webtorrent",
-  "PLAYER": "/player",
+  "PLAYER": "/player/:path",
   "ANIMES": "/animes",
-  "ANIME": "/anime/:name/:id"
+  "ANIME": "/anime/:name/:id",
+  "LOGIN": "/login",
+  "REGISTER": "/register",
+  "ME": "/me"
 }

@@ -1,5 +1,8 @@
 // @flow
+import axios from "axios";
+import Conf from "../constants/public";
 
+const api = axios.create({baseURL: Conf.servers.nyaa.url});
 
 export type Opts = {
   +trusted: boolean,
@@ -22,6 +25,7 @@ export type Torrent = {
 export type EpisodeDatum = {
   +magnetURL: string,
   +title: string,
+  +filename: string,
   +episode: number,
   +date: number
 };
@@ -43,14 +47,19 @@ const sizes = {
 async function searchFor(term: string, opts?: Opts = {trusted: true, english: true, page: 1}): Promise<string> {
   const f = opts.trusted ? '2' : '0';
   const c = opts.english ? '1_2' : '0_0';
-  const url = new URL(nyaaURL);
-  url.searchParams.append('f', f);
-  url.searchParams.append('c', c);
-  url.searchParams.append('q', term);
-  url.searchParams.append('p', opts.page || 1);
 
-  const content = await fetch(url.toString());
-  return content.text();
+  const {data} = await api.get("", {
+    params: {
+      f,
+      c,
+      q: term,
+      p: opts.page?? 1
+    },
+    headers: {
+      accepts: 'text/html'
+    }
+  });
+  return data;
 }
 
 function rowToTorrent(row: HTMLElement): Torrent {
@@ -60,11 +69,11 @@ function rowToTorrent(row: HTMLElement): Torrent {
     .querySelectorAll('td')
     .item(1)
     .querySelector('a:not(.comments)').innerText;
-  const magnetURL = row
+  const rowLinks = row
     .querySelectorAll('td')
     .item(2)
-    .querySelectorAll('a')
-    .item(1)
+    .querySelectorAll('a');
+  const magnetURL = (rowLinks.item(1)?? rowLinks.item(0))
     .getAttribute('href');
   const seeds = parseInt(row.querySelectorAll('td').item(5).innerText, 10);
   const leeches = parseInt(row.querySelectorAll('td').item(6).innerText, 10);
@@ -103,41 +112,69 @@ function rowToTorrent(row: HTMLElement): Torrent {
 }
 
 
-function parseNyaa(nyaa: string): Torrent[] {
+function parseNyaa(nyaa: string): {torrents: Torrent[], size: number} {
   const parser = new DOMParser();
   const doc = parser.parseFromString(nyaa, 'text/html');
 
-  const torrents: Element[] = [];
-
-  doc
-    .querySelectorAll('table.torrent-list tbody tr')
-    .forEach(t => torrents.push(t));
-
-  return torrents.map(rowToTorrent);
+  const torrents = [...doc.querySelectorAll('table.torrent-list tbody tr')] // node list does not have a map method, i learnt it the hard way
+    .map(rowToTorrent);
+  const sizeText = doc.querySelector(".pagination-page-info")?.childNodes[0]?.nodeValue;
+  const regex = /Displaying results (\d+)-(\d+) out of (\d+) results\./;
+  const result = regex.exec(sizeText);
+  const size = result?.[3]?? -1;
+  return {
+    torrents,
+    size
+  }
 }
 
 
-export async function search(term, opts?: Opts): Promise<Torrent> {
-  const content = await searchFor(term, opts);
-  return parseNyaa(content);
+export async function search(
+  term,
+  opts?: Opts = {english: true, trusted: true, page: 1, perPage: 16}
+  ): Promise<{torrents: Torrent[], pageCount: number, count: number}> {
+
+  const {pageCount} = Conf.servers.nyaa;
+  const {page = 1, perPage = 16} = opts;
+  const si = ((page - 1) * perPage) + 1; // absolute number of the first ep of the page
+  const concretePage = Math.floor(si / pageCount) + 1;
+  const pageIndex = si % pageCount || pageCount;
+  const firstPageLength = Math.min(pageCount - pageIndex + 1, perPage);
+  const secondPageLength = perPage - firstPageLength;
+
+  const {torrents: pageOne, size} = parseNyaa(await searchFor(term, {...opts, page: concretePage}));
+  const {torrents: pageTwo} = parseNyaa(await searchFor(term, {...opts, page: concretePage + 1}));
+
+  console.log(`Result set size for term "${term}" is ${size}`);
+  const p1 = pageOne.slice(pageIndex - 1, pageIndex - 1 + firstPageLength);
+  const p2 = pageTwo.slice(0, secondPageLength);
+  const torrents = [...p1, ...p2];
+  const pCount = Math.floor(size / pageCount) + 1;
+  return {torrents, pageCount: pCount, count: size};
 }
 
-export function getEpisodes(anime, page = 1): Promise<EpisodeDatum> {
-  return search(`${anime} horriblesubs 1080p`, {trusted: true, english: true, page})
-    .then(r => r.map(torrentToEpisode));
+
+export async function getEpisodes(anime, page = 1, perPage = 16): Promise<{episodes: [EpisodeDatum], pageCount: number}> {
+  const term = `${anime} horriblesubs 1080p`;
+  const searchResult = await search(term, {page, perPage, english: true, trusted: true});
+  const episodes = searchResult.torrents.map(torrentToEpisode);
+
+  return {
+    episodes,
+    pageCount: Math.floor(searchResult.count / perPage) + 1
+  };
 }
 
 const torrentRegex = /\[HorribleSubs](.+) - (\d+)/;
 
 function torrentToEpisode(torrent: Torrent): EpisodeDatum {
   const matches = torrentRegex.exec(torrent.title);
-  console.log(`Matches against ${torrent.title}`);
-  console.log(matches);
   const title = matches[1];
   const episode = matches[2];
   return {
     title,
     episode,
+    filename: torrent.title,
     date: torrent.date,
     magnetURL: torrent.magnetURL
   }

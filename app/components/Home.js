@@ -1,54 +1,57 @@
 // @flow
 import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import {remote} from 'electron'
 import List from '@material-ui/core/List';
 import Torrent from './Torrent'
-import type { Torrent as T, Opts } from '../utils/nyaapi';
+import type { Torrent as T } from '../utils/nyaapi';
 import Search from './WeebInput';
 import styles from './Home.css'
 import Loader from './Loader';
-
-type Props = {
-  torrents: T[],
-  loading: boolean,
-  findTorrents: (string, Opts) => void,
-  downloadTorrent: (torrent: string, path: string) => void
-};
+import {findTorrents} from "../actions/weeb";
+import {download as downloadTorrent} from "../actions/webtorrent";
+import type {stateType} from "../reducers/types";
 
 
 async function openDialogue(torrent: T, download) {
-  const res = await remote.dialog.showSaveDialog({defaultPath: torrent.title});
-  console.log(res);
+  const directory = (await remote.dialog.showOpenDialog({properties: ["openDirectory", "createDirectory"]}))[0];
 
-  if (res) {
-    console.log("Issuing download with action...");
-    download(torrent.magnetURL, res);
+  if (directory) {
+     download(torrent.magnetURL, directory);
   }
 }
 
-export default function Home(props: Props) {
+export default function Home() {
+  const dispatch = useDispatch();
+  const tors = useSelector((state: stateType) => state.nyaa.torrents);
+  const loading = useSelector((state: stateType) => state.nyaa.loading);
   useEffect(() => {
-    props.findTorrents("");
+    dispatch(findTorrents(""));
   }, []);
 
-  const torrents = props.torrents.map(torrent => (
-    <Torrent
-      key={torrent.title}
-      torrent={torrent}
-      onClick={t => openDialogue(t, props.downloadTorrent)}
-      onSecondary={t => openDialogue(t, props.downloadTorrent)}
-    />
+  const download = (magnet, dir) => dispatch(downloadTorrent(magnet, dir));
+
+  const torrents = tors.map(torrent => (
+      <Torrent
+        key={torrent.title}
+        torrent={torrent}
+        onClick={t => openDialogue(t, download)}
+        onSecondary={t => openDialogue(t, download)}
+      />
     )
   );
-  console.log("Rendering");
-  return <div className={styles.container}>
-    <Search prompt='Search...' search={props.findTorrents} />
-    {props.loading ? (
-      <Loader />
-    ) : (
-      <List className={styles['torrent-list']}>
-        {torrents}
-      </List>
-    )}
-  </div>
+
+  return (
+    <div className={styles.container}>
+      <Search prompt='Search...' search={(term, opts) => dispatch(findTorrents(term, opts))}>
+        {loading ? (
+          <Loader/>
+        ) : (
+          <List className={styles['torrent-list']}>
+            {torrents}
+          </List>
+        )}
+      </Search>
+    </div>
+  )
 }

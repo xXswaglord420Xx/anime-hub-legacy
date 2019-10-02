@@ -3,10 +3,10 @@ import {Link} from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTheme } from '@material-ui/styles';
 import styles from './AnimePage.css'
-import type { animeStateType, stateType } from '../reducers/types';
-import { loadNextPage } from '../actions/schedule';
-import LazyImage from './LazyImage';
-import Loader from './Loader';
+import type { animeStateType, stateType } from '../../reducers/types';
+import { loadNextPage } from '../../actions/schedule';
+import LazyImage from '../Utils/LazyImage';
+import Loader from '../Loader';
 
 function secondsToTime(seconds) {
   const days = Math.floor(seconds / (3600 * 24));
@@ -48,12 +48,13 @@ export default function AnimePage() {
         <LazyImage className={styles.image}
                    src={anime.coverImage.extraLarge}
                    width='100%'
+                   height='320px'
                    alt={anime.title.romaji}/>
         <div className={styles.titleBar} style={{ backgroundColor: theme.palette.secondary[700] }}>
           <div>
             {
               anime.nextAiringEpisode ?
-                `${secondsToTime(anime.nextAiringEpisode.timeUntilAiring)} until ep ${anime.nextAiringEpisode.episode}` :
+                `Ep ${anime.nextAiringEpisode.episode} in ${secondsToTime(anime.nextAiringEpisode.timeUntilAiring)}` :
                 "Unknown"
             }
           </div>

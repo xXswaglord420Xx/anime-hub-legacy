@@ -1,0 +1,6 @@
+.content {
+}
+
+.content > * {
+  margin-bottom: 7px;
+}

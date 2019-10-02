@@ -1,6 +1,13 @@
 import type { Dispatch as ReduxDispatch, Store as ReduxStore } from 'redux';
 import type { Torrent } from '../utils/nyaapi';
 
+export type Authorization = {
+  token: string,
+  refresh_token: string,
+  username: string,
+  issuedAt: Date,
+  loginStatus: 'LOGGED_IN' | 'LOGGING_IN' | 'LOGGED_OUT' | 'ERROR'
+};
 
 export type webTorrent = {
   completed: boolean,
@@ -10,7 +17,8 @@ export type webTorrent = {
   uploadSpeed: number,
   downloadSpeed: number,
   peers: number,
-  hash: string
+  id: string,
+  name: string
 };
 
 export type nyaaStateType = {
@@ -46,11 +54,24 @@ export type webTorrentStateType = {
   +active: webTorrent
 };
 
+export type actionableType = {
+  text: string,
+  onAction: any => void
+};
+
+export type notificationsType = {
+  snackbar: {
+    text: string,
+    actions: actionableType[]
+  }
+};
+
 export type stateType = {
   +nyaa: nyaaStateType,
   +webTorrent: webTorrentStateType,
-  +torrentClient: Object,
-  +schedule: scheduleStateType
+  +schedule: scheduleStateType,
+  +auth: Authorization,
+  +notifications: notificationsType
 };
 
 export type Action = {

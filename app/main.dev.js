@@ -10,59 +10,41 @@
  *
  * @flow
  */
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, Tray, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import WebTorrent from 'webtorrent';
 import MenuBuilder from './menu';
+import Ref from "./utils/ref";
+import discord from "./utils/discord-main";
+import Conf from "./constants/public";
+import TorrentClient from "./utils/torrent";
+import {Session} from './utils/sesh';
+
+discord(Conf.discord.clientId).catch(console.error);
+
+const mainWindow: Ref<BrowserWindow> = new Ref(null);
+let torrentClient;
+// eslint-disable-next-line no-unused-vars
+let sesh;
+let tray = null;
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
+  torrentClient = new TorrentClient(mainWindow);
+  sesh = new Session(mainWindow);
   app.on('second-instance', () => {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore();
+    if (mainWindow.exists()) {
+      const window = mainWindow.get();
+      if (window.isMinimized()) {
+        window.restore();
       }
-      mainWindow.focus()
+      window.focus()
+    } else {
+      createWindow();
     }
   })
 }
-
-const client = new WebTorrent();
-
-function serialiseTorrent(t) {
-  return {
-    progress: t.progress,
-    downloadSpeed: t.downloadSpeed,
-    uploadSpeed: t.uploadSpeed,
-    numPeers: t.numPeers
-  };
-}
-
-console.log("Listening for torrent requests...");
-ipcMain.on('request-torrent', (event, arg) => {
-  console.log(`Downloading torrent to ${arg.path}`);
-  client.add(arg.magnet, {path: arg.path}, t => {
-    event.sender.send("torrent-begin", {...serialiseTorrent(t), id: arg.magnet});
-
-    const interval = setInterval(() => {
-      event.sender.send("torrent-progress", {...serialiseTorrent(t), id: arg.magnet});
-    }, 1000);
-
-    /*
-    t.on('download', () => {
-      event.sender.send("torrent-progress", t);
-    });
-    */
-    t.on('done', () => {
-      clearInterval(interval);
-      event.sender.send("torrent-finish", {...serialiseTorrent(t), id: arg.magnet});
-      console.log("DONE");
-      t.destroy(()=> console.log("destroyed"));
-    })
-  });
-});
 
 export default class AppUpdater {
   constructor() {
@@ -72,7 +54,6 @@ export default class AppUpdater {
   }
 }
 
-let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -101,13 +82,41 @@ const installExtensions = async () => {
  * Add event listeners...
  */
 
+function createWindow() {
+  const window = new BrowserWindow({
+    show: false,
+    width: 1024,
+    height: 728,
+    backgroundColor: '#455a64'
+  });
+  mainWindow.set(window);
+
+  window.loadURL(`file://${__dirname}/app.html`);
+
+  // @TODO: Use 'ready-to-show' event
+  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  window.on('ready-to-show', () => {
+    if (!window) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      window.minimize();
+    } else {
+      window.show();
+      window.focus();
+    }
+  });
+
+  window.on('closed', () => {
+    mainWindow.set(null);
+  });
+
+  const menuBuilder = new MenuBuilder(window);
+  menuBuilder.buildMenu();
+}
+
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-    client.destroy(() => console.log("Client destroyed"));
-  }
+
 });
 
 app.on('ready', async () => {
@@ -118,34 +127,38 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728
-  });
+  tray = new Tray(`${__dirname}/32x32.png`);
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+  const menu = Menu.buildFromTemplate([
+    {
+      label: "Exit",
+      click: async () => {
+        try {
+          await torrentClient.close();
+          await torrentClient.saveTorrents();
+          console.log("destroyed");
+          app.quit();
+          console.log("quit");
+        } catch(e) {
+          console.error(e);
+        }
+      }
     }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
+  ]);
+  tray.setContextMenu(menu);
+  tray.on('double-click', () => {
+    if (mainWindow.exists()) {
+      const window = mainWindow.get();
+      if (window.isMinimized()) {
+        window.restore();
+      }
+      window.focus()
     } else {
-      mainWindow.show();
-      mainWindow.focus();
+      createWindow();
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  createWindow();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

@@ -4,10 +4,11 @@ import {grey, amber, red, pink} from '@material-ui/core/colors'
 
 const muiTheme = createMuiTheme({
   palette: {
-    primary: {main: grey[800]},
+    primary: amber,
     secondary: pink,
     accent: amber,
     error: red,
+    background: {main: grey[800]},
     type: 'dark'
   }
 });

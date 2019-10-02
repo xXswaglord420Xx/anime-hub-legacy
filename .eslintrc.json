@@ -15,6 +15,14 @@
     "prefer-destructuring": "off",
     "no-plusplus": "off",
     "react/require-default-props": "off",
-    "react/no-danger": "off"
+    "react/no-danger": "off",
+    "camelcase": "off",
+    "no-underscore-dangle": "off",
+    "dot-notation": "off",
+    "no-await-in-loop": "off",
+    "no-else-return": "off",
+    "prefer-promise-reject-errors": "off",
+    "no-restricted-syntax": "off",
+    "jsx-a11y/media-has-caption": "off"
   }
 }

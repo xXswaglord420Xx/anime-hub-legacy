@@ -11,15 +11,13 @@ function addTorrents(torrents) {
   }
 }
 
-const wait = delay => new Promise(resolve => setTimeout(() => resolve(), delay));
 
 export function findTorrents(term, opts) {
   return async (dispatch) => {
     dispatch({
       type: LOAD_TORRENTS
     });
-    await wait(2000);
-    const torrents = await search(term, opts);
+    const {torrents} = await search(term, opts);
     dispatch(addTorrents(torrents));
   }
 }
