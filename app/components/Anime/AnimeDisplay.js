@@ -1,13 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {remote} from "electron";
 import {join} from "path";
-import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
-import ListItemText from '@material-ui/core/ListItemText';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
 import Skeleton from "@material-ui/lab/Skeleton";
-import {useTheme} from '@material-ui/styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {push} from "connected-react-router"
 import PlayArrow from "@material-ui/icons/PlayArrow"
@@ -20,7 +14,7 @@ import type {EpisodeDatum} from '../../utils/nyaapi';
 import {download} from '../../actions/webtorrent';
 import {updatePresence} from '../../utils/discord'
 import Pagination from "./Pagination";
-import type {stateType, webTorrent} from "../../reducers/types";
+import type {StateType, webTorrent} from "../../reducers/types";
 import {range} from "../../utils/util";
 import LazyImage from "../Utils/LazyImage";
 
@@ -46,7 +40,7 @@ function EpComponent(props: EpProps) {
   const img = props.img;
   const ep: EpisodeDatum = props.ep;
   const dispatch = useDispatch();
-  const torrent: webTorrent = useSelector((state: stateType) => {
+  const torrent: webTorrent = useSelector((state: StateType) => {
     const hash = parseTorrent(ep.magnetURL).infoHash;
     for (const tracked of Object.values(state.webTorrent.tracked)) {
       if (tracked.id === hash) {
@@ -79,6 +73,7 @@ function EpComponent(props: EpProps) {
         <div
           role='button'
           tabIndex={0}
+          style={{width: '100%'}}
           onKeyPress={e => e.code === "Enter" && onClick()}
           onClick={onClick}
         >
@@ -124,7 +119,6 @@ function Episodes({episodes, banner, status, episodePageCount, page, setPage}) {
 export default function AnimeDisplay(props: DisplayProps) {
   const [page, setPage] = useState(1);
   const anime = useAnime(props.match.params.id, props.match.params.name, page);
-  const theme = useTheme();
 
 
   useEffect(() => {
@@ -139,40 +133,20 @@ export default function AnimeDisplay(props: DisplayProps) {
   } else if (anime.animeStatus === Status.FINISHED) {
     const deets = anime.details;
     const episodes = anime.episodes;
-    const {cover, airingAt, banner, description, nextEpisode, title, episodes: episodeCount, characters} = deets;
+    const {cover, airingAt, banner, description, nextEpisode, title, episodes: episodeCount} = deets;
     const dateText = airingAt? `Episode ${nextEpisode}/${episodeCount} airing at ${airingAt}` : "Airing date unknown";
 
     return (
       <div className={styles.root}>
         <div className={styles.banner}>
-          <img className={styles.bannerImage} alt='banner' src={banner}/>
-          <img className={styles.cover} alt='poster' src={cover}/>
+          <LazyImage width='100%' height={220} className={styles.bannerImage} alt='banner' src={banner}/>
+          <div className={styles.coverContainer}><LazyImage width='100%' height='100%' className={styles.cover} alt='poster' src={cover}/></div>
           <div className={styles.titles}>
             <h2>{title}</h2>
             <p>{dateText}</p>
           </div>
         </div>
         <div className={styles.infoContainer}>
-          <div className={styles.characterContainer}>
-            <Typography
-              style={{
-                backgroundColor: theme.palette.secondary[700],
-                padding: '10px 1em',
-                borderRadius: '13px 13px 0 0',
-                marginBottom: '4px'
-              }}>Characters</Typography>
-            <Paper className={styles.paper}>
-              <List>
-                {
-                  characters.map(({id, name}) => (
-                    <ListItem key={id}>
-                      <ListItemText primary={name.full} />
-                    </ListItem>
-                  ))
-                }
-              </List>
-            </Paper>
-          </div>
           <div className={styles.synopsis}>
             <p dangerouslySetInnerHTML={{ __html: description }}/>
           </div>
