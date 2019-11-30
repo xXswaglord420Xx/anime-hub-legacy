@@ -10,15 +10,65 @@
  *
  * @flow
  */
-import { app, BrowserWindow, Tray, Menu } from 'electron';
+import { app, BrowserWindow, Tray, Menu, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import {join} from "path";
+import {writeFile, readFileSync} from "fs";
 import MenuBuilder from './menu';
 import Ref from "./utils/ref";
 import discord from "./utils/discord-main";
 import Conf from "./constants/public";
 import TorrentClient from "./utils/torrent";
 import {Session} from './utils/sesh';
+import ipc from './utils/channelMain';
+
+function readSettings() {
+  const defaultSettings = {
+    "init_scheme_prompt_done": false,
+    "is_default_protocol_client": app.isDefaultProtocolClient('magnet'),
+    "extract_subs": true,
+    "verify_video_hash": true
+  };
+  try {
+    const path = join(app.getPath("userData"), "settings.json");
+    const settings = readFileSync(path, {encoding: 'utf-8'});
+
+    return settings? JSON.parse(settings) : defaultSettings;
+  } catch {
+    return defaultSettings;
+  }
+}
+
+function saveSettings() {
+  return new Promise(resolve => {
+    const path = join(app.getPath("userData"), "settings.json");
+    writeFile(path, JSON.stringify(settings), {encoding: 'utf-8'}, () => {
+      resolve();
+    });
+  });
+}
+
+const settings = readSettings();
+
+ipc.addHandler('settings', ({name, value, command}) => {
+  console.log(`Executing command ${command} with ${name} : ${value}`);
+  if (command === "set") {
+    settings[name] = value;
+    switch (name) {
+      case 'is_default_protocol_client':
+        console.log('changing default protocol value');
+        if (value) app.setAsDefaultProtocolClient('magnet');
+        else app.removeAsDefaultProtocolClient('magnet');
+        console.log('default protocol value set');
+        break;
+      default:
+    }
+    return true;
+  }
+
+  return settings;
+});
 
 discord(Conf.discord.clientId).catch(console.error);
 
@@ -28,12 +78,24 @@ let torrentClient;
 let sesh;
 let tray = null;
 
+async function openTorrent(torrent) {
+  const path = (await dialog.showOpenDialog({properties: ["openDirectory", "createDirectory"]}))[0];
+  return torrentClient.enqueueTorrent(torrent, path);
+}
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
+  if (!app.isDefaultProtocolClient("magnet") && settings['isDefaultProtocolClient']) {
+    app.setAsDefaultProtocolClient("magnet")
+  }
   torrentClient = new TorrentClient(mainWindow);
   sesh = new Session(mainWindow);
-  app.on('second-instance', () => {
+  app.on('second-instance', (_, args) => {
+    console.log('Second instance of app');
+    if (args[1]) {
+      openTorrent(args[1]).catch(console.error);
+    }
     if (mainWindow.exists()) {
       const window = mainWindow.get();
       if (window.isMinimized()) {
@@ -87,7 +149,8 @@ function createWindow() {
     show: false,
     width: 1024,
     height: 728,
-    backgroundColor: '#455a64'
+    backgroundColor: '#455a64',
+    autoHideMenuBar: true
   });
   mainWindow.set(window);
 
@@ -127,6 +190,12 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
+  app.on('open-url', (e, url) => {
+    console.log(`Opening magnet ${url}`);
+    openTorrent(url);
+    e.preventDefault();
+  });
+
   tray = new Tray(`${__dirname}/32x32.png`);
 
   const menu = Menu.buildFromTemplate([
@@ -137,10 +206,12 @@ app.on('ready', async () => {
           await torrentClient.close();
           await torrentClient.saveTorrents();
           console.log("destroyed");
-          app.quit();
-          console.log("quit");
+          await saveSettings();
         } catch(e) {
           console.error(e);
+        } finally {
+          app.quit();
+          console.log("quit");
         }
       }
     }

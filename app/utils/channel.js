@@ -24,7 +24,7 @@ export default class Channel {
     channels.set(channel, this);
   }
 
-  request(arg) {
+  request(arg): Promise<any> {
     const key = {
       channel: this.channel,
       id: ++this.__seq_id

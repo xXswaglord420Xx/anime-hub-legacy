@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Appearance",
+    "settings": [
+      {
+        "label": "Dark mode",
+        "name": "dark_mode",
+        "type": "switch",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "I don't know how to name the sections",
+    "settings": [
+      {
+        "label": "Default magnet URL handler",
+        "name": "is_default_protocol_client",
+        "type": "switch",
+        "default": false
+      },
+      {
+        "label": "Extract subtitles during download",
+        "name": "extract_subs",
+        "type": "switch",
+        "default": true
+      },
+      {
+        "label": "Verify video hash",
+        "name": "verify_video_hash",
+        "type": "switch",
+        "default": true
+      }
+    ]
+  }
+]

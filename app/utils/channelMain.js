@@ -15,12 +15,8 @@ class __A {
 
         const result = await res;
         if (res.removeListener) res.removeListener('progress', pf);
-        console.log(`arrr sending thay response result`);
-        console.log(result);
         event.sender.send('rpc:reply', {channel, id, payload: {result}});
       } catch (error) {
-        console.error(`whoopty error gottened`);
-        console.error(error);
         event.sender.send('rpc:reply', {channel, id, payload: {error}})
       }
     });

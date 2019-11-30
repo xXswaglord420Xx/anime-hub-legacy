@@ -3,14 +3,14 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {remote} from 'electron'
 import List from '@material-ui/core/List';
-import Torrent from './Torrent'
+import Torrent from './Torrent/Torrent'
 import type { Torrent as T } from '../utils/nyaapi';
-import Search from './WeebInput';
+import Search from './AppBar';
 import styles from './Home.css'
 import Loader from './Loader';
 import {findTorrents} from "../actions/weeb";
 import {download as downloadTorrent} from "../actions/webtorrent";
-import type {stateType} from "../reducers/types";
+import type {StateType} from "../reducers/types";
 
 
 async function openDialogue(torrent: T, download) {
@@ -23,8 +23,8 @@ async function openDialogue(torrent: T, download) {
 
 export default function Home() {
   const dispatch = useDispatch();
-  const tors = useSelector((state: stateType) => state.nyaa.torrents);
-  const loading = useSelector((state: stateType) => state.nyaa.loading);
+  const tors = useSelector((state: StateType) => state.nyaa.torrents);
+  const loading = useSelector((state: StateType) => state.nyaa.loading);
   useEffect(() => {
     dispatch(findTorrents(""));
   }, []);
@@ -43,7 +43,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <Search prompt='Search...' search={(term, opts) => dispatch(findTorrents(term, opts))}>
+      <Search title="Nyaa" prompt='Search...' search={(term, opts) => dispatch(findTorrents(term, opts))}>
         {loading ? (
           <Loader/>
         ) : (

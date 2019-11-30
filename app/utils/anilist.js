@@ -39,27 +39,31 @@ export const test = () => {
 // language=GraphQL
 export const Q_AIRING_ANIME = `
   query AiringAnime($page: Int) {
-    Page(page: $page perPage: 50) {
-      pageInfo{
-        currentPage,
-        hasNextPage
+      Page(page: $page perPage: 50) {
+          pageInfo{
+              currentPage,
+              hasNextPage
+          }
+          media (type: ANIME status: RELEASING sort: [TRENDING_DESC, POPULARITY_DESC]){
+              id,
+              title{
+                  romaji,
+                  english,
+                  native
+              },
+              coverImage {
+                  extraLarge
+              },
+              nextAiringEpisode {
+                  episode,
+                  timeUntilAiring
+              },
+              description,
+              tags {
+                  name
+              }
+          }
       }
-      media (type: ANIME status: RELEASING sort: [TRENDING_DESC, POPULARITY_DESC]){
-        id,
-        title{
-          romaji,
-          english,
-          native
-        },
-        coverImage {
-          extraLarge
-        },
-        nextAiringEpisode {
-          episode,
-          timeUntilAiring
-        }
-      }
-    }
   }
 `;
 

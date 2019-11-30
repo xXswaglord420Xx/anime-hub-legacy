@@ -58,9 +58,9 @@ export default function SideMenu() {
         <ListItemLink primary='Animes' to={routes.ANIMES}/>
         <ListItemLink primary='Nyaa' to={routes.HOME}/>
         <ListItemLink primary='Torrents' to={routes.WEBTORRENT} />
-        <ListItemLink primary='Player' to={routes.PLAYER}/>
+        <ListItemLink primary='Player' to='/player/null'/>
         <Divider/>
-        <ListItemLink primary='Settings' to={routes.HOME} />
+        <ListItemLink primary='Settings' to={routes.SETTINGS} />
         <ListItemLink primary='Exit' to={routes.HOME}/>
       </List>
     </Drawer>

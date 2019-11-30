@@ -1,13 +1,13 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { fetchAiringAnime } from '../utils/anilist';
-import type { stateType } from '../reducers/types';
+import type { StateType } from '../reducers/types';
 
 export const UPDATE_AIRING = "UPDATE_AIRING";
 export const REQUEST_UPDATE = "REQUEST_UPDATE";
 
 export const loadNextPage = () => {
-  return (dispatch: ThunkDispatch, getState: () => stateType) => {
-    if (!getState().schedule.hasNextPage) {
+  return (dispatch: ThunkDispatch, getState: () => StateType) => {
+    if (!getState().schedule.hasNextPage || getState().schedule.fetching) {
       return Promise.resolve();
     }
     dispatch({

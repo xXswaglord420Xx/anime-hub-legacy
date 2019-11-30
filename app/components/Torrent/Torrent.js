@@ -7,7 +7,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 
-import type {Torrent} from "../utils/nyaapi";
+import type {Torrent} from "../../utils/nyaapi";
 
 type Props = {
   torrent: Torrent,

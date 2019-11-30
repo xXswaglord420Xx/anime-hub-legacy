@@ -9,14 +9,15 @@ import routes from './constants/routes';
 import App from './containers/App';
 import Home from './components/Home';
 import AnimePage from './components/Anime/AnimePage';
-import WebTorrent from './components/WebTorrentPage';
+import WebTorrent from './components/Torrent/WebTorrentPage';
 import SideMenu from './components/Main/SideMenu';
 import Player from './components/Player/Player';
 import AnimeDisplay from './components/Anime/AnimeDisplay';
-import type {stateType} from "./reducers/types";
+import type {StateType} from "./reducers/types";
+import Settings from "./components/Settings/Settings";
 
 export default () => {
-  const snack = useSelector((state: stateType) => state.notifications.snackbar);
+  const snack = useSelector((state: StateType) => state.notifications.snackbar);
 
   return (
     <App>
@@ -29,6 +30,7 @@ export default () => {
             <Route path={routes.PLAYER} component={Player}/>
             <Route path={routes.ANIMES} component={AnimePage}/>
             <Route path={routes.ANIME} component={AnimeDisplay}/>
+            <Route path={routes.SETTINGS} component={Settings}/>
             <Route path={routes.HOME} component={Home}/>
           </Switch>
 

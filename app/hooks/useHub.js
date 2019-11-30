@@ -1,10 +1,10 @@
 import {useSelector} from "react-redux";
 import {useResource} from "./fetch";
-import type {stateType} from "../reducers/types";
+import type {StateType} from "../reducers/types";
 import {api} from "../utils/sesh";
 
 export function useHub(endpoint, method) {
-  const token = useSelector((state: stateType) => state.auth.token);
+  const token = useSelector((state: StateType) => state.auth.token);
 
   if (!token) {
     throw new (function uwu() {this.error = "Unvaccinated access"}); // i dont like linter comments and im honestly too lazy to throw a proper error, i might just remove this error completely because its not like im the kind of person to care really

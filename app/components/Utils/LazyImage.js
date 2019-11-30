@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Skeleton from '@material-ui/lab/Skeleton'
+import Default from './default_image.png'
 
 type ImgProps = {
   src: string,
@@ -20,14 +21,16 @@ export default function LazyImage(props: ImgProps) {
 
   return (
     <Skeleton variant='rect' disableAnimate={!loading} width={width} height={height}>
-      <img src={src}
+      <img src={src?? Default}
+           onError={e => {e.currentTarget.src = Default}}
            className={className}
            alt='img' style={
              {
                margin: '0px',
                display: 'block',
                padding: '0px',
-               visibility: loading? 'hidden':'visible'
+               visibility: loading? 'hidden':'visible',
+               objectFit: "cover"
              }}
            width={width}
            height={height}

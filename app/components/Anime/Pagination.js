@@ -18,14 +18,14 @@ export default function Pagination(props: PaginationProps) {
   const pageEnd = Math.min(page + preferredSideButtons, lastPage);
 
   const firstPageButton = pageStart === 1 ? null : ([
-      <Button onClick={() => onPageChange(1)}>1</Button>,
-      <Button variant="contained" disabled>&hellip;</Button>
+      <Button key='page_first' onClick={() => onPageChange(1)}>1</Button>,
+      <Button key='more_first' variant="contained" disabled>&hellip;</Button>
     ]
   );
 
   const lastPageButton = pageEnd === lastPage ? null : ([
-      <Button variant="contained" disabled>&hellip;</Button>,
-      <Button onClick={() => onPageChange(lastPage)}>{lastPage}</Button>
+      <Button variant="contained" key='more_last' disabled>&hellip;</Button>,
+      <Button key='page_last' onClick={() => onPageChange(lastPage)}>{lastPage}</Button>
     ]
   );
 
@@ -35,7 +35,7 @@ export default function Pagination(props: PaginationProps) {
       {firstPageButton}
       {
         [...range(pageStart, pageEnd + 1)]
-          .map(n => <Button onClick={() => onPageChange(n)} variant={n === page? "contained" : "outlined"} disabled={n === page}>{n}</Button>)
+          .map(n => <Button key={`page_${n}`} onClick={() => onPageChange(n)} variant={n === page? "contained" : "outlined"} disabled={n === page}>{n}</Button>)
       }
       {lastPageButton}
       </ButtonGroup>

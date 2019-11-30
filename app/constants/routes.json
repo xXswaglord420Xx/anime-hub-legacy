@@ -1,6 +1,6 @@
 {
   "HOME": "/",
-  "COUNTER": "/counter",
+  "SETTINGS": "/settings",
   "WEBTORRENT": "/webtorrent",
   "PLAYER": "/player/:path",
   "ANIMES": "/animes",

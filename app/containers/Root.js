@@ -5,6 +5,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import type { Store } from '../reducers/types';
 import Routes from '../Routes';
 import WebTorrenter from './WebTorrenter';
+import {SettingsConnector} from "./Settings";
 
 type Props = {
   store: Store,
@@ -17,6 +18,7 @@ export default class Root extends Component<Props> {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
+          <SettingsConnector />
           <WebTorrenter />
           <Routes />
         </ConnectedRouter>

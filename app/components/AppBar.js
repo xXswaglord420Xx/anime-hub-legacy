@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {ReactElement, useEffect, useState} from 'react'
 import InputBase from '@material-ui/core/InputBase';
 import { createStyles, fade, Theme, makeStyles, useTheme } from '@material-ui/core/styles';
 import Bar from '@material-ui/core/AppBar';
@@ -8,7 +8,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import TablePagination from "@material-ui/core/TablePagination";
 import Box from "@material-ui/core/Box";
 
-const useStyles= makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
@@ -67,17 +67,72 @@ const useStyles= makeStyles((theme: Theme) =>
 type Props = {
   search: (string, {page: number}) => void,
   children: React.ReactNode,
-  prompt: ?string
+  prompt: ?string,
+  title: string | ReactElement
 };
 
-export function AppBar(props: Props) {
+type SearchAppBarProps = {
+  onSearch: string => void,
+  prompt: ?string,
+  title: string | ReactElement
+};
+
+type AppBarProps = {
+  children: ReactElement[],
+  title: string | ReactElement
+};
+
+export function AppBar(props: AppBarProps) {
   const classes = useStyles();
   const theme = useTheme();
+
+  return (
+    <Bar style={{backgroundColor: theme.palette.background.main, color: 'white'}} position='static'>
+      <Toolbar>
+        <Typography className={classes.title} variant="h6" noWrap>
+          {props.title}
+        </Typography>
+        {props.children}
+      </Toolbar>
+    </Bar>
+  )
+}
+
+export function SearchAppBar(props: SearchAppBarProps) {
+  const {onSearch, prompt} = props;
+  const classes = useStyles();
+
+  return (
+    <AppBar title={props.title}>
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon/>
+        </div>
+        <InputBase
+          placeholder={prompt}
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          inputProps={{
+            'aria-label': 'search', onKeyDown: e => {
+              if (e.keyCode === 13) {
+                e.preventDefault();
+                onSearch(e.currentTarget.value)
+              }
+            }
+          }}
+        />
+      </div>
+    </AppBar>
+  )
+}
+
+export function PagedAppBar(props: Props) {
   const [term, setTerm] = useState("");
   const [page, setPage] = useState(1);
 
   const {prompt, search} = props;
-  console.log(`Page is ${page}`);
 
   useEffect(() => {
     search(term, {page, english: true, trusted: true})
@@ -85,34 +140,7 @@ export function AppBar(props: Props) {
 
   return (
     <>
-      <Bar style={{backgroundColor: theme.palette.background.main, color: 'white'}} position="static">
-        <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            Nyaa
-          </Typography>
-
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon/>
-            </div>
-            <InputBase
-              placeholder={prompt}
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{
-                'aria-label': 'search', onKeyDown: e => {
-                  if (e.keyCode === 13) {
-                    e.preventDefault();
-                    setTerm(e.currentTarget.value)
-                  }
-                }
-              }}
-            />
-          </div>
-        </Toolbar>
-      </Bar>
+      <SearchAppBar title={props.title} onSearch={setTerm} prompt={prompt}/>
       {props.children}
       <Box borderTop={1} borderColor='grey.600'>
         <TablePagination
@@ -130,4 +158,4 @@ export function AppBar(props: Props) {
 }
 
 
-export default AppBar;
+export default PagedAppBar;

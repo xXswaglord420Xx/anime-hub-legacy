@@ -18,6 +18,39 @@ type LoginFormProps = {
   onClose: () => void
 };
 
+function loginErrorToString(e) {
+  if (e.description || e.data?.description) {
+    return e.description || e.data?.description;
+  } else if (e.response) {
+    console.error(e);
+    switch (e.response.status) {
+      case 400:
+        return "I made a whoopty doo please send me the error logs";
+      case 401:
+        return "Uhhh... you aren't logged in I guess. Don't ask. Just send me the logs.";
+      case 403:
+        return "You're lacking the required permissions to do this";
+      case 408:
+        return "Request has timed out. Please get a better internet connection.";
+      case 413:
+      case 414:
+        return "You're trying to send too much.";
+      case 418:
+        return "I'm a teapot. I refuse to brew covfefe.";
+      case 429:
+        return "You're asking me too many things at once";
+      case 501:
+        return "This is not implemented yet";
+      case 511:
+        return "You need to log in to your Wi-Fi network (or pay your internet bills idk)";
+      default:
+        return `I honestly don't know what happened but here a status code (send me the logs): ${e.response.status} `
+    }
+  } else {
+    return "Cannot establish connection to the server"
+  }
+}
+
 export default function LoginForm(props: LoginFormProps) {
   const [username, setUsername] = useState('');
   const [login, setLogin] = useState('');
@@ -29,7 +62,7 @@ export default function LoginForm(props: LoginFormProps) {
     try {
       await dispatch(signIn(login, password));
     } catch (e) {
-      dispatch(pushSnack(e.description || 'Cannot establish connection to the server.'));
+      dispatch(pushSnack(loginErrorToString(e)));
     }
   }
 
@@ -37,7 +70,7 @@ export default function LoginForm(props: LoginFormProps) {
     try {
       await dispatch(signUp(login, password, username));
     } catch (e) {
-      dispatch(pushSnack(e.description || 'Cannot establish connection to the server.'));
+      dispatch(pushSnack(loginErrorToString(e)));
     }
   }
 

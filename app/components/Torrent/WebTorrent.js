@@ -1,7 +1,7 @@
 import React from 'react';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import ListItem from '@material-ui/core/ListItem';
-import type { webTorrent } from '../reducers/types';
+import type { webTorrent } from '../../reducers/types';
 
 type PropsType = {
   torrent: webTorrent

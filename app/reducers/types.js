@@ -39,7 +39,9 @@ export type animeStateType = {
   nextAiringEpisode: {
     episode: number,
     timeUntilAiring: number
-  }
+  },
+  description: string,
+  tags: {name: string}[]
 };
 
 export type scheduleStateType = {
@@ -66,19 +68,34 @@ export type notificationsType = {
   }
 };
 
-export type stateType = {
+export type SettingsCollection = {[string]: boolean | number | string};
+
+export type AnimeEpisodeEntry = {
+  name: string,
+  number: number,
+  watched: boolean,
+  path: string
+};
+
+export type Library = {
+  series: string[],
+  episodes: {[string]: AnimeEpisodeEntry[]}
+};
+
+export type StateType = {
   +nyaa: nyaaStateType,
   +webTorrent: webTorrentStateType,
   +schedule: scheduleStateType,
   +auth: Authorization,
-  +notifications: notificationsType
+  +notifications: notificationsType,
+  +settings: SettingsCollection
 };
 
 export type Action = {
   +type: string
 };
 
-export type GetState = () => stateType;
+export type GetState = () => StateType;
 
 export type Dispatch = ReduxDispatch<Action>;
 

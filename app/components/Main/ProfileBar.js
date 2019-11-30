@@ -6,7 +6,7 @@ import ThreeDots from "@material-ui/icons/MoreHoriz";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {makeStyles} from "@material-ui/core";
 import {pink} from "@material-ui/core/colors";
-import type {stateType} from "../../reducers/types";
+import type {StateType} from "../../reducers/types";
 import {Profile} from "./Profile";
 import LoginForm from "./LoginForm";
 
@@ -34,8 +34,8 @@ export default function ProfileBar() {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const openLoginDialog = () => setLoginOpen(true);
   const closeLoginDialog = () => setLoginOpen(false);
-  const loginStatus = useSelector((state: stateType) => state.auth.loginStatus);
-  const username = useSelector((state: stateType) => state.auth.username);
+  const loginStatus = useSelector((state: StateType) => state.auth.loginStatus);
+  const username = useSelector((state: StateType) => state.auth.username);
   const classes = useStyles();
 
   let login;

@@ -5,11 +5,16 @@
   flex-wrap: wrap;
   justify-content: space-evenly;
   padding: 10px;
+  height: 100%;
 }
 
 .root * {
   margin: 0;
   padding: 0;
+}
+
+.superRoot {
+  width: 100%;
 }
 
 .tile {
@@ -57,4 +62,45 @@
   display: inline-block;
   color: inherit;
   text-decoration: none;
+}
+
+.hoverBoard {
+  transition: 0.1s;
+  margin: 8px;
+}
+
+.hoverBoard:hover {
+  transform: translateX(8px);
+}
+
+.card {
+  display: flex;
+  width: 480px;
+  height: 280px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.cardContent {
+  padding: 8px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card .description {
+  /*
+    TODO: add ellipsis
+   */
+  flex: 1;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.card .chip {
+  margin: 4px;
+}
+
+.card .chipSet {
+  margin: 8px 0;
 }

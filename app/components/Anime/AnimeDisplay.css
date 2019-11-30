@@ -1,5 +1,6 @@
 .root {
   overflow-y: scroll;
+  width: 100%;
 }
 
 .banner {
@@ -16,14 +17,19 @@
   filter: drop-shadow(0 0 7px black);
 }
 
-.cover {
+.coverContainer {
   position: absolute;
   bottom: 30px;
   left: 60px;
   width: 180px;
   height: 250px;
-  object-fit: cover;
   filter: drop-shadow(0 0 3px black);
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .titles {

@@ -4,7 +4,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import type {stateType} from "../../reducers/types";
+import type {StateType} from "../../reducers/types";
 import {signOut} from "../../actions/auth";
 
 type ProfileProps = {
@@ -13,7 +13,7 @@ type ProfileProps = {
 };
 
 export const Profile = ({visible, onClose}: ProfileProps = {visible: false, onClose: () => null}) => {
-  const username = useSelector((state: stateType) => state.auth.username);
+  const username = useSelector((state: StateType) => state.auth.username);
   const dispatch = useDispatch();
 
   function logOut() {

@@ -1,5 +1,5 @@
 import WebTorrent from "webtorrent";
-import {BrowserWindow, ipcMain, app} from "electron";
+import {BrowserWindow, Notification, ipcMain, app} from "electron";
 import {join} from "path";
 import {readFile, writeFile} from "fs";
 import Ref from "./ref";
@@ -16,7 +16,11 @@ export default class TorrentClient {
     this.reviveTorrents().catch(console.error);
 
     if (listenIpc) {
-      ipcMain.on('torrent:request', () => this.updateWindowState(windowRef.get()));
+      ipcMain.on('torrent:request', e => e.sender.send('state:torrent', {
+        type: 'revive',
+        torrent: this.torrents.map(TorrentClient.serialiseTorrent)
+      }));
+
       ipcMain.on('torrent:modify', async (event, {type, id, resourceId, path}) => {
         switch (type) {
           case 'new':
@@ -85,7 +89,7 @@ export default class TorrentClient {
       this.windowRef.get().webContents.send('state:torrent', {
         type: 'update',
         torrent: TorrentClient.serialiseTorrent(t),
-        id: t.infoHash || throw new Error("No info hash?")
+        id: t.infoHash
       })
     }
 
@@ -129,7 +133,14 @@ export default class TorrentClient {
         yield torrent;
       }
     }
+
+    // eslint-disable-next-line no-new
+    new Notification({
+      title: torrent.name,
+      body: `Your torrent has finished downloading UwU, please eat it with breakfast`
+    });
     torrent.destroy();
+    return torrent;
   }
 
   addTorrent(magnet: string, path: string) {

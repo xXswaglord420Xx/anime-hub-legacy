@@ -10,7 +10,8 @@ export default () => {
     function onTorrentStateChanged(event, {type, torrent, id}) {
       switch (type) {
         case 'revive':
-          torrent.forEach(t => onTorrentStateChanged({type: 'update', torrent: t, id}));
+          console.log(`Reviving torrents`);
+          torrent.forEach(t => onTorrentStateChanged(event, {type: 'update', torrent: t, id}));
           break;
         case 'update':
           dispatch({
